@@ -1,7 +1,6 @@
-use admin;
-if(rs.conf() == null){
+var first_setup = rs.conf() == null;
+if(first_setup){
   rs.initiate();
-  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
 }
 if(db.isMaster().ismaster) {
 {{#endpoints}}
@@ -9,4 +8,8 @@ if(db.isMaster().ismaster) {
   rs.add("{{server.internal_address}}:{{.}}");
   {{/ports}}
 {{/endpoints}}
+}
+if(first_setup) {
+  use admin;  
+  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
 }
