@@ -3,8 +3,10 @@ if(rs.conf() == null){
   rs.initiate();
   db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
 }
+if(db.isMaster().ismaster) {
 {{#endpoints}}
   {{#ports}}
-rs.add("{{server.internal_address}}:{{.}}");
+  rs.add("{{server.internal_address}}:{{.}}");
   {{/ports}}
 {{/endpoints}}
+}
