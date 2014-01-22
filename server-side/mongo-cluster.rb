@@ -49,7 +49,7 @@ end
 def configure_replica(mongo_endpoints, username, password, port)
   bind = { :endpoints => mongo_endpoints, :username => username, :password => password }
   template = FileHelpers.read_file_at('../mongo-scripts/replicate.js.mustache')
-  replica_file = "/tmp/mongo-" + port + ".js"
+  replica_file = "/tmp/mongo-" + port.to_s + ".js"
   FileHelpers.write_file_at(replica_file, Mustache.render(template, bind))
   configure_command = "mongo --port %s --nodb '%s'" % [port, replica_file]
   puts configure_command
