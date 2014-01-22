@@ -40,7 +40,7 @@ master_check_lock = options[:app_id] + "-mongo-master-check"
 
 def is_master(port)
   file_out = "/tmp/" + Time.now.to_i.to_s + port.to_i.to_s
-  master_command = "mongo --port %s --eval '%s' > %s" % [port, FileHelpers.read_file_at('../mongo-scripts/is_master.js'), file_out]
+  master_command = "mongo --port %s --nodb --eval '%s' > %s" % [port, FileHelpers.read_file_at('../mongo-scripts/is_master.js'), file_out]
   puts master_command
   system master_command
   FileHelpers.read_file_at(file_out).split("\n")[2] == 'true'
@@ -49,7 +49,9 @@ end
 def configure_replica(mongo_endpoints, username, password, port)
   bind = { :endpoints => mongo_endpoints, :username => username, :password => password }
   template = FileHelpers.read_file_at('../mongo-scripts/replicate.js.mustache')
-  configure_command = "mongo --port %s --eval '%s'" % [port, Mustache.render(template, bind)]
+  replica_file = "/tmp/mongo-" + port + ".js"
+  FileHelpers.write_file_at(replica_file, Mustache.render(template, bind))
+  configure_command = "mongo --port %s --nodb '%s'" % [port, replica_file]
   puts configure_command
   system configure_command
 end

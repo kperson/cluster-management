@@ -1,6 +1,6 @@
+use admin;
 if(rs.conf() == null){
   rs.initiate();
-  use admin;
   db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
 }
 {{#endpoints}}
