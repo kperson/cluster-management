@@ -1,0 +1,10 @@
+if(rs.conf() == null){
+  rs.initiate();
+  use admin;
+  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
+}
+{{#endpoints}}
+  {{#ports}}
+rs.add("{{server.internal_address}}:{{.}}");
+  {{/ports}}
+{{/endpoints}}
