@@ -19,14 +19,16 @@ class Mongo < App
     base_host_file = (0...25).map { (65 + rand(26)).chr }.join + ".yml"
     abs_host_file = "/tmp/" + base_host_file
     self.cluster.sync(abs_host_file)
-    playbook = [{ 'hosts' => 'all', 'tasks' => [
+    playbook = [{ 'hosts' => 'all', 'sudo' => 'yes', 'tasks' => [
       { 'name' => 'copy cluster file',  'copy' => 'src=%s dest=%s' % [base_host_file, clusterfile] },
-      { 'name' => 'ensure mongo replication',  'command' => '/install/cluster-management/server-side/mongo-cluster.rb --id {{ app_id }} --dns {{ internal_dns }} --username {{ username }} --password {{ password }}' }
+      { 'name' => 'copy git server management repo', 'git' => 'repo=https://github.com/kperson/cluster-management.git dest=/install/cluster-management version=master' },
+      { 'name' => 'ensure mongo replication', 'command' => '/usr/local/bin/ruby /install/cluster-management/server-side/mongo-cluster.rb --id {{ app_id }} --dns {{ internal_dns }} --username {{ username }} --password {{ password }} --clusterfile /install/cluster.yml chdir=/install/cluster-management/server-side' }
     ]}]
     FileHelpers.write_file_at(playbook_file, YAML.dump(playbook))
     username = 'username'
     password = 'password'
-    command = 'ansible-playbook %s -i %s --extra-vars "id=%s username=%s password=%s clusterfile=%s"' % [playbook_file, host_file, self.app_id, username, password, clusterfile]
+    command = 'ansible-playbook %s -i %s --extra-vars "app_id=%s username=%s password=%s clusterfile=%s"' % [playbook_file, host_file, self.app_id, username, password, clusterfile]
+    puts command
     system command
   end
 
