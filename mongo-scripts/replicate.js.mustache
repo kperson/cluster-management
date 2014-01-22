@@ -9,7 +9,7 @@ if(db.isMaster().ismaster) {
   {{/ports}}
 {{/endpoints}}
 }
-if(first_setup) {
-  use admin;  
-  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
-}
+//if(first_setup) {
+//  use admin;  
+//  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
+//}
