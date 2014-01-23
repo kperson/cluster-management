@@ -7,11 +7,18 @@ class Mongo < App
 
   def self.MongoCluster(app_id, rep_set, cluster, cpus = 1.0, ram = 512)
     app = Mongo.new(app_id, cluster, cpus, ram)
-    app.command = 'cd /install && sudo /usr/local/bin/ruby /install/replica-mongo.rb --port $PORT --set %s --fork false' % [rep_set]
+    app.command = 'cd /install && sudo /usr/local/bin/ruby /install/replica-mongo.rb --port $PORT --set %s' % [rep_set]
     app
   end
 
-  def replicate
+  def start(num_nodes)
+    super
+    scale_action(num_nodes)
+  end
+
+  def scale_action(num_nodes)
+    super
+    sleep(10)
     host_file = "/tmp/" + (0...25).map { (65 + rand(26)).chr }.join
     InventoryGenerator.new({ :all => self.instances.collect{|x| x[:server] } }).generate(host_file)
     clusterfile = "/install/cluster.yml"

@@ -32,16 +32,20 @@ class App
     if !self.cluster.app_exists?(self.app_id)
       self.start(num_nodes)
     elsif self.num_nodes != num_nodes
-      puts "Scaling app %s from %s to %s" % [self.app_id, self.num_nodes, num_nodes]
-      scale_endpoint = '%s%s' % [self.cluster.api_endpoint, 'v1/apps/scale']
-      conn = Faraday.new
-      resp = conn.post do |req|
-        req.url scale_endpoint
-        req.headers = { 'Content-Type' => 'application/json' }
-        req.body = JSON.dump({ 'id' => self.app_id, 'instances' => num_nodes })       
-      end 
-      self.recheck_instances(1)
+      scale_action(num_nodes)
     end
+  end
+
+  def scale_action(num_nodes)
+    puts "Scaling app %s from %s to %s" % [self.app_id, self.num_nodes, num_nodes]
+    scale_endpoint = '%s%s' % [self.cluster.api_endpoint, 'v1/apps/scale']
+    conn = Faraday.new
+    resp = conn.post do |req|
+      req.url scale_endpoint
+      req.headers = { 'Content-Type' => 'application/json' }
+      req.body = JSON.dump({ 'id' => self.app_id, 'instances' => num_nodes })       
+    end 
+    self.recheck_instances(1)   
   end
 
   def recheck_instances(delay = 0)

@@ -1,1 +1,1 @@
-print(db.isMaster().ismaster)
+print(db.isMaster().ismaster && rs.conf() != null)

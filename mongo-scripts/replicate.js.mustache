@@ -1,11 +1,13 @@
 var first_setup = rs.conf() == null;
 if(first_setup){
   rs.initiate();
+  sleep(5000);
 }
 if(db.isMaster().ismaster) {
 {{#endpoints}}
   {{#ports}}
   rs.add("{{server.internal_address}}:{{.}}");
+  sleep(1000);
   {{/ports}}
 {{/endpoints}}
 }
