@@ -37,9 +37,10 @@ version = zk.get(version_key)[0]
 git = zk.get(git_key)[0]
 
 system 'mkdir -p /apps'
+system 'rm -rf ' + install_dir
 system 'git clone %s %s' % [git, install_dir]
 Dir.chdir install_dir
 if type == 'rack'
   system 'bundle install'
-  system "rerun 'rackup -p %s'" % [options[:port]]
+  system 'bundle exec rackup -p %s' % [options[:port]]
 end

@@ -24,6 +24,10 @@ class LoadBalanced < App
         zk.set(self.type_key, type)
       rescue ZK::Exceptions::NodeExists
       end
+    else
+      zk.set(self.version_key, version)
+      zk.set(self.git_key, git_repo)
+      zk.set(self.type_key, type)    
     end
     self.command = 'sudo /usr/local/bin/ruby /install/cluster-management/server-side/webapp.rb --port $PORT --id %s --clusterfile /install/cluster.yml' % [self.app_id]
   end
