@@ -24,27 +24,13 @@ OptionParser.new do |opts|
 end.parse!
 
 cluster = Cluster.load_from_file(options[:clusterfile])
-zk = ZK.new(self.cluster.masters.collect{|x| x.external_address + ":2181" }.join(",") + "/webapps")
+zk = ZK.new(cluster.masters.collect{|x| x.external_address + ":2181" }.join(",") + "/webapps")
 
-def app_dir
-  "/" + Digest::MD5.hexdigest(options[:id]).to_s
-end
-
-def install_dir
-  "/apps" + app_dir
-end
-
-def git_key
-  app_dir + '-git'
-end
-
-def version_key
-  app_dir + '-version'
-end  
-
-def type_key
-  app_dir + '-type'
-end    
+app_dir = "/" + Digest::MD5.hexdigest(options[:id]).to_s
+install_dir = "/apps" + app_dir
+git_key = app_dir + '-git'
+version_key = app_dir + '-version'
+type_key = app_dir + '-type'
 
 type = zk.get(type_key)
 version = zk.get(version_key)
