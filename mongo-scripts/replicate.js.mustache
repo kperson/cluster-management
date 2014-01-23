@@ -7,9 +7,31 @@ if(db.isMaster().ismaster) {
 {{#endpoints}}
   {{#ports}}
   rs.add("{{server.internal_address}}:{{.}}");
-  sleep(1000);
+  sleep(2000);
   {{/ports}}
 {{/endpoints}}
+  var in_set = [];
+{{#endpoints}}
+  {{#ports}}
+  in_set.push("{{server.internal_address}}:{{.}}");
+  {{/ports}}
+{{/endpoints}}
+  var current_members = [];
+  var conf = rs.conf().members;
+  for(var i = 0; i < conf.length; i++){
+    current_members.push(conf[i].host);
+  }
+  for(var c = 0; c < current_members.length; c++) {
+    if(in_set.indexOf(current_members[c]) == -1){
+      rs.remove(current_members[c]);
+    }
+  }
+  {{#endpoints}}
+    {{#ports}}
+    rs.add("{{server.internal_address}}:{{.}}");
+    sleep(2000);
+    {{/ports}}
+  {{/endpoints}}  
 }
 //if(first_setup) {
 //  use admin;  
