@@ -4,7 +4,10 @@ require 'optparse'
 require_relative '../cluster'
 require_relative '../server'
 require_relative '../app'
+require_relative '../mongo'
 require_relative '../file_helpers'
+require_relative '../load_balanced'
+
 
 options = { }
 OptionParser.new do |opts|
