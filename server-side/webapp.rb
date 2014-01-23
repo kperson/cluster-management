@@ -2,6 +2,9 @@ require 'digest/md5'
 require 'optparse'
 
 require_relative '../cluster'
+require_relative '../server'
+require_relative '../app'
+require_relative '../file_helpers'
 
 options = { }
 OptionParser.new do |opts|
@@ -47,7 +50,7 @@ git = zk.get(git_key)
 system 'mkdir -p /apps'
 system 'git clone %s %s' % [git, install_dir]
 Dir.chdir install_dir
-if type == 'ruby'
+if type == 'rack'
   system 'bundle install'
   system "rerun 'rackup -p %s'" % [options[:port]]
 end
