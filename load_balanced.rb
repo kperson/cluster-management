@@ -1,17 +1,47 @@
 require_relative 'app'
 require 'digest/md5'
+require 'zookeeper'
 
 class LoadBalanced < App
 
   attr_accessor :git_repo, :version, :config_files, :type, :pre_deploy_scripts
 
   def initialize(app_id, git_repo, version, cluster, type, cpus = 1.0, ram = 512)
-    id = Digest::MD5.hexdigest(git_repo + "a123456f7890c").to_s
     super(app_id, cluster, cpus, ram)
     config_files = []
     self.type = type
     self.git_repo = git_repo
     self.version = version
+    zk = ZK.new(self.cluster.masters.collect{|x| x.external_address + ":2181" }.join(",") + "/webapps")
+    if !zk.exists?(self.git_key)
+      begin
+        zk.create(git_key)
+        zk.create(version_key)
+        zk.create(type_key)
+        sleep(5)
+        zk.set(self.version_key, version)
+        zk.set(self.git_key, git_repo)
+        zk.set(self.type_key, type)
+      rescue ZK::Exceptions::NodeExists
+      end
+    end
+    self.command = 'sudo /usr/local/bin/ruby /install/cluster-management/webapp.rb --port $PORT --id %s --clusterfile /install/cluster.yml' % [self.app_id]
+  end
+
+  def git_key
+    app_dir + '-git'
+  end
+
+  def version_key
+    app_dir + '-version'
+  end  
+
+  def type_key
+    app_dir + '-type'
+  end    
+
+  def app_dir
+    "/" + self.app_hash
   end
 
   def add_config_file(source, destination)
@@ -22,7 +52,7 @@ class LoadBalanced < App
     pre_deploy_scripts << { :source  => source, :destination => destination, :run_all_nodes => run_all_nodes }
   end
 
-  def reploy
+  def redeploy
   end
 
 end

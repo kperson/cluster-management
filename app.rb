@@ -1,4 +1,5 @@
 require 'json'
+require 'digest/md5'
 
 class App
 
@@ -16,6 +17,10 @@ class App
     self.recheck_instances
   end
 
+  def app_hash
+    Digest::MD5.hexdigest(app_id).to_s
+  end
+
   def start(num_nodes)
       puts "Starting app %s with command '%s' with %s nodes" % [self.app_id, self.command, num_nodes]
       start_endpoint = '%s%s' % [self.cluster.api_endpoint, 'v1/apps/start']
@@ -25,7 +30,7 @@ class App
         req.headers = { 'Content-Type' => 'application/json' }
         req.body = JSON.dump({ 'id' => self.app_id, 'instances' => num_nodes, 'cmd' => command, 'mem' => self.ram, 'cpus' => cpus })       
       end
-      self.recheck_instances(1)
+      self.recheck_instances(3)
   end
 
   def scale(num_nodes)
@@ -45,7 +50,7 @@ class App
       req.headers = { 'Content-Type' => 'application/json' }
       req.body = JSON.dump({ 'id' => self.app_id, 'instances' => num_nodes })       
     end 
-    self.recheck_instances(1)   
+    self.recheck_instances(3)   
   end
 
   def recheck_instances(delay = 0)

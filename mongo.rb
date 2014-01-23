@@ -1,4 +1,5 @@
 require 'yaml'
+require 'zk'
 
 require_relative 'file_helpers'
 require_relative 'app'
@@ -20,7 +21,9 @@ class Mongo < App
     super
     sleep(10)
     host_file = "/tmp/" + (0...25).map { (65 + rand(26)).chr }.join
-    InventoryGenerator.new({ :all => self.instances.collect{|x| x[:server] } }).generate(host_file)
+    #InventoryGenerator.new({ :all => self.instances.collect{|x| x[:server] } }).generate(host_file)
+    InventoryGenerator.new({ :all => cluster.servers }).generate(host_file)
+
     clusterfile = "/install/cluster.yml"
     playbook_file = "/tmp/" + (0...25).map { (65 + rand(26)).chr }.join + ".yml"
     base_host_file = (0...25).map { (65 + rand(26)).chr }.join + ".yml"
