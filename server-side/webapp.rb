@@ -32,9 +32,9 @@ git_key = app_dir + '-git'
 version_key = app_dir + '-version'
 type_key = app_dir + '-type'
 
-type = zk.get(type_key)
-version = zk.get(version_key)
-git = zk.get(git_key)
+type = zk.get(type_key)[0]
+version = zk.get(version_key)[0]
+git = zk.get(git_key)[0]
 
 system 'mkdir -p /apps'
 system 'git clone %s %s' % [git, install_dir]
