@@ -30,5 +30,5 @@ if(db.isMaster().ismaster) {
 if(first_setup) {
   var conn = new Mongo();
   var db = conn.getDB("admin");
-  db.auth("{{username}}", "{{password}}");
+  db.addUser("{{username}}", "{{password}}");
 }
