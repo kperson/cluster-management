@@ -49,7 +49,7 @@ def is_master(port)
 end
 
 def configure_replica(mongo_endpoints, username, password, port)
-  bind = { :endpoints => mongo_endpoints, :username => username, :password => password }
+  bind = { :endpoints => mongo_endpoints, :username => username, :password => password, :port => port }
   template = FileHelpers.read_file_at('../mongo-scripts/replicate.js.mustache')
   replica_file = "/tmp/mongo-" + port.to_s + ".js"
   FileHelpers.write_file_at(replica_file, Mustache.render(template, bind))
