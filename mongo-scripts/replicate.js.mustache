@@ -27,8 +27,8 @@ if(db.isMaster().ismaster) {
     }
   }
 }
-if(first_setup) {
-  var conn = new Mongo();
-  var db = conn.getDB("admin");
-  db.addUser("{{username}}", "{{password}}");
-}
+//if(first_setup) {
+//  var conn = new Mongo();
+//  var db = conn.getDB("admin");
+//  db.addUser("{{username}}", "{{password}}");
+//}
