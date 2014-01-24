@@ -26,14 +26,8 @@ if(db.isMaster().ismaster) {
       rs.remove(current_members[c]);
     }
   }
-  {{#endpoints}}
-    {{#ports}}
-    rs.add("{{server.internal_address}}:{{.}}");
-    sleep(2000);
-    {{/ports}}
-  {{/endpoints}}  
 }
-//if(first_setup) {
-//  use admin;  
-//  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
-//}
+if(first_setup) {
+  use admin;
+  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
+}

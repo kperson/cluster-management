@@ -27,7 +27,7 @@ cluster = Cluster.load_from_file(options[:clusterfile])
 zk = ZK.new(cluster.masters.collect{|x| x.external_address + ":2181" }.join(",") + "/webapps")
 
 app_dir = "/" + Digest::MD5.hexdigest(options[:id]).to_s
-install_dir = "/apps" + app_dir
+install_dir = "/apps" + app_dir + port.to_s
 git_key = app_dir + '-git'
 version_key = app_dir + '-version'
 type_key = app_dir + '-type'
@@ -40,6 +40,8 @@ system 'mkdir -p /apps'
 system 'rm -rf ' + install_dir
 system 'git clone %s %s' % [git, install_dir]
 Dir.chdir install_dir
+system 'git checkout -- .'
+system 'git checkout %s' % [version_key]
 if type == 'rack'
   system 'bundle install'
   system 'bundle exec rackup -p %s' % [options[:port]]

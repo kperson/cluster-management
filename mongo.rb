@@ -19,7 +19,7 @@ class Mongo < App
 
   def scale_action(num_nodes)
     super
-    sleep(10)
+    sleep(num_nodes * 2)
     host_file = "/tmp/" + (0...25).map { (65 + rand(26)).chr }.join
     #InventoryGenerator.new({ :all => self.instances.collect{|x| x[:server] } }).generate(host_file)
     InventoryGenerator.new({ :all => cluster.servers }).generate(host_file)
