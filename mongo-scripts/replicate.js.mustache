@@ -28,6 +28,7 @@ if(db.isMaster().ismaster) {
   }
 }
 if(first_setup) {
-  use admin;
-  db.addUser({ user: "{{username}}", pwd: "{{password}}", roles: [ "userAdminAnyDatabase" ] });
+  var conn = new Mongo();
+  var db = conn.getDB("admin");
+  db.auth("{{username}}", "{{password}}");
 }
